@@ -1,31 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useGetData } from './hooks/useGetData'
+import { ErrorMessage } from './components/ErrorMessage'
+import { Loader } from './components/Loader'
 import './App.css'
 
-function App() {
-   const [count, setCount] = useState(0)
+export const API_BASE_URL = 'https://api.disneyapi.dev'
+
+export const App = () => {
+   const { data, isLoading, error } = useGetData(API_BASE_URL, '/character')
+
+   if (isLoading) {
+      return <Loader>Loading...</Loader>
+   }
 
    return (
       <>
+         {error && <ErrorMessage>Error: {error.message}</ErrorMessage>}
          <div>
-            <a href="https://vite.dev" target="_blank">
-               <img src={viteLogo} className="logo" alt="Vite logo" />
-            </a>
-            <a href="https://react.dev" target="_blank">
-               <img src={reactLogo} className="logo react" alt="React logo" />
-            </a>
+            {data.data.map(character => (
+               <div key={character._id}>
+                  <h3>{character.name}</h3>
+                  <img src={character.imageUrl} alt={character.name} />
+               </div>
+            ))}
          </div>
-         <h1>Vite + React</h1>
-         <div className="card">
-            <button onClick={() => setCount(count => count + 1)}>count is {count}</button>
-            <p>
-               Edit <code>src/App.jsx</code> and save to test HMR
-            </p>
-         </div>
-         <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
       </>
    )
 }
-
-export default App
