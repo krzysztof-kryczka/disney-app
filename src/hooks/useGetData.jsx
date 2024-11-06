@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export const useGetData = (API_BASE_URL, path) => {
+export const useGetData = (API_BASE_URL, path, page, limit) => {
    const [data, setData] = useState(null)
    const [isLoading, setIsLoading] = useState(true)
    const [error, setError] = useState(null)
@@ -8,7 +8,7 @@ export const useGetData = (API_BASE_URL, path) => {
    useEffect(() => {
       const fetchData = async () => {
          try {
-            const endpoint = new URL(path, API_BASE_URL).href
+            const endpoint = `${new URL(path, API_BASE_URL).href}?page=${page}&pageSize=${limit}`
             console.log('endpoint: ', endpoint)
             const response = await fetch(endpoint)
             console.log('response: ', response)
@@ -26,7 +26,7 @@ export const useGetData = (API_BASE_URL, path) => {
          }
       }
       fetchData()
-   }, [path])
+   }, [path, page, limit])
 
    return { data, isLoading, error }
 }
