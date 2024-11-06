@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { CharacterModal } from './CharacterModal'
 import styled from 'styled-components'
 
 const StyledImageList = styled.ul`
@@ -56,7 +58,12 @@ const StyledButton = styled.button`
 `
 
 export const ImageGallery = ({ cards }) => {
+   const [selectedCharacter, setSelectedCharacter] = useState(null)
    console.log('images: ', cards)
+   const handleButtonClick = character => {
+      console.log('character', character)
+      setSelectedCharacter(character)
+   }
 
    return (
       <>
@@ -65,10 +72,13 @@ export const ImageGallery = ({ cards }) => {
                <StyledImageItem key={character._id}>
                   <StyledImage src={character.imageUrl} alt={character.name} />
                   <StyledHeader>{character.name}</StyledHeader>
-                  <StyledButton>Więcej informacji</StyledButton>
+                  <StyledButton onClick={() => handleButtonClick(character)}>Więcej informacji</StyledButton>
                </StyledImageItem>
             ))}
          </StyledImageList>
+         {selectedCharacter && (
+            <CharacterModal character={selectedCharacter} onClose={() => setSelectedCharacter(null)} />
+         )}
       </>
    )
 }
