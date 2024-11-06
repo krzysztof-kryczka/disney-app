@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { CharacterDetails } from './CharacterDetails'
+import { Loader } from './Loader'
 import styled from 'styled-components'
 
 const ModalOverlay = styled.div`
@@ -23,9 +25,27 @@ const ModalContent = styled.div`
    border-radius: 12px;
    background: #fff;
    overflow-y: auto;
+
+   /* Stylizacja paska przewijania */
+   &::-webkit-scrollbar {
+      width: 15px; /* Szerokość paska przewijania */
+   }
+
+   &::-webkit-scrollbar-thumb {
+      background-color: #e51b36; /* Kolor paska przewijania */
+      border-radius: 6px; /* Zaokrąglenie paska przewijania */
+   }
+
+   &::-webkit-scrollbar-track {
+      background: #f1f1f1; /* Kolor tła paska przewijania */
+      border-radius: 6px; /* Zaokrąglenie tła paska przewijania */
+   }
 `
 
-const CloseButton = styled.button`
+const StyledCloseButton = styled.button`
+   position: sticky;
+   top: 0;
+   right: 0;
    background-color: #fff;
    cursor: pointer;
    padding: 10px 16px;
@@ -35,7 +55,7 @@ const CloseButton = styled.button`
    color: #e51b36;
    border: 2px solid #e51b36;
    border-radius: 4px;
-   transform: translate(180%, 0%);
+   transform: translate(900%, 0%);
    &:hover {
       background-color: #e51b36;
       color: #fff;
@@ -80,54 +100,18 @@ export const CharacterModal = ({ character, onClose }) => {
    return createPortal(
       <ModalOverlay onClick={handleCloseClick}>
          <ModalContent>
+            <StyledCloseButton onClick={onClose}>X</StyledCloseButton>
             <StyledImage src={character.imageUrl} alt={character.name} />
             <StyledHeader>{character.name}</StyledHeader>
             {characterDetails ? (
                <>
-                  {characterDetails.films.length > 0 && (
-                     <div>
-                        <h3>Films</h3>
-                        <ul>
-                           {characterDetails.films.map((film, index) => (
-                              <li key={index}>{film}</li>
-                           ))}
-                        </ul>
-                     </div>
-                  )}
-                  {characterDetails.shortFilms.length > 0 && (
-                     <div>
-                        <h3>Short Films</h3>
-                        <ul>
-                           {characterDetails.shortFilms.map((shortFilm, index) => (
-                              <li key={index}>{shortFilm}</li>
-                           ))}
-                        </ul>
-                     </div>
-                  )}
-                  {characterDetails.videoGames.length > 0 && (
-                     <div>
-                        <h3>Video Games</h3>
-                        <ul>
-                           {characterDetails.videoGames.map((videoGame, index) => (
-                              <li key={index}>{videoGame}</li>
-                           ))}
-                        </ul>
-                     </div>
-                  )}
-                  {characterDetails.tvShows.length > 0 && (
-                     <div>
-                        <h3>TV Shows</h3>
-                        <ul>
-                           {characterDetails.tvShows.map((tvShow, index) => (
-                              <li key={index}>{tvShow}</li>
-                           ))}
-                        </ul>
-                     </div>
-                  )}
-                  <CloseButton onClick={onClose}>Zamknij</CloseButton>
+                  <CharacterDetails title="Films" items={characterDetails.films} />
+                  <CharacterDetails title="Short Films" items={characterDetails.shortFilms} />
+                  <CharacterDetails title="Video Games" items={characterDetails.videoGames} />
+                  <CharacterDetails title="TV Shows" items={characterDetails.tvShows} />
                </>
             ) : (
-               <p>Loading details...</p>
+               <Loader>Loading details...</Loader>
             )}
          </ModalContent>
       </ModalOverlay>,
