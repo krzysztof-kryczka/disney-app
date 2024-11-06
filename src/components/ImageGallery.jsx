@@ -57,9 +57,9 @@ const StyledButton = styled.button`
    }
 `
 
-export const ImageGallery = ({ cards }) => {
+export const ImageGallery = ({ images }) => {
    const [selectedCharacter, setSelectedCharacter] = useState(null)
-   console.log('images: ', cards)
+   console.log('images: ', images)
    const handleButtonClick = character => {
       console.log('character', character)
       setSelectedCharacter(character)
@@ -68,7 +68,7 @@ export const ImageGallery = ({ cards }) => {
    return (
       <>
          <StyledImageList>
-            {cards.data.map(character => (
+            {images.map(character => (
                <StyledImageItem key={character._id}>
                   <StyledImage src={character.imageUrl} alt={character.name} />
                   <StyledHeader>{character.name}</StyledHeader>
