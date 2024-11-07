@@ -59,11 +59,10 @@ const StyledButton = styled.button`
 `
 
 export const ImageGallery = ({ images }) => {
-   const [selectedCharacter, setSelectedCharacter] = useState(null)
-   console.log('images: ', images)
+   const [selectedCharacterId, setSelectedCharacterId] = useState(null)
+
    const handleButtonClick = character => {
-      console.log('character', character)
-      setSelectedCharacter(character)
+      setSelectedCharacterId(character._id)
    }
 
    return (
@@ -77,8 +76,8 @@ export const ImageGallery = ({ images }) => {
                </StyledImageItem>
             ))}
          </StyledImageList>
-         {selectedCharacter && (
-            <CharacterModal character={selectedCharacter} onClose={() => setSelectedCharacter(null)} />
+         {selectedCharacterId && (
+            <CharacterModal characterId={selectedCharacterId} onClose={() => setSelectedCharacterId(null)} />
          )}
       </>
    )
