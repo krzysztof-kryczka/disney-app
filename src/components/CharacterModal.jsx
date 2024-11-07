@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { CharacterDetails } from './CharacterDetails'
 import { Loader } from './Loader'
+import { ErrorMessage } from './ErrorMessage'
+import { useGetData } from '../hooks/useGetData'
+import { API_BASE_URL } from '../App'
 import styled from 'styled-components'
 import noPicture from '../assets/no-picture.jpg'
 
@@ -79,18 +82,34 @@ const StyledHeader = styled.h2`
    text-align: center;
 `
 
-export const CharacterModal = ({ character, onClose }) => {
+export const CharacterModal = ({ characterId, onClose }) => {
+   // characterId = 1111111111111111111  // testy
+   const { data: character, isLoading, error } = useGetData(API_BASE_URL, '/character', null, null, characterId)
    const [characterDetails, setCharacterDetails] = useState(null)
 
    useEffect(() => {
-      setTimeout(() => {
-         setCharacterDetails({
-            films: character.films || [],
-            shortFilms: character.shortFilms || [],
-            videoGames: character.videoGames || [],
-            tvShows: character.tvShows || [],
-         })
-      }, 1000)
+      if (character) {
+         let characterData = character.data
+         // Sprawdzenie, czy dane są z tablicy i jeśli tak, czy jest niepusta
+         if (Array.isArray(characterData)) {
+            if (characterData.length === 0) {
+               characterData = null
+            } else {
+               characterData = characterData[0]
+            }
+         }
+         if (characterData) {
+            const { films, shortFilms, videoGames, tvShows } = characterData
+            setCharacterDetails({
+               films: films || [],
+               shortFilms: shortFilms || [],
+               videoGames: videoGames || [],
+               tvShows: tvShows || [],
+            })
+         } else {
+            setCharacterDetails(null)
+         }
+      }
    }, [character])
 
    const handleCloseClick = e => {
@@ -103,17 +122,23 @@ export const CharacterModal = ({ character, onClose }) => {
       <ModalOverlay onClick={handleCloseClick}>
          <ModalContent>
             <StyledCloseButton onClick={onClose}>X</StyledCloseButton>
-            <StyledImage src={character.imageUrl || noPicture} alt={character.name} />
-            <StyledHeader>{character.name}</StyledHeader>
+            {error && <ErrorMessage>{error.message}</ErrorMessage>}
             {characterDetails ? (
                <>
+                  <StyledImage src={character.data.imageUrl || noPicture} alt={character.data.name} />
+                  <StyledHeader>{character.data.name}</StyledHeader>
                   <CharacterDetails title="Films" items={characterDetails.films} />
                   <CharacterDetails title="Short Films" items={characterDetails.shortFilms} />
                   <CharacterDetails title="Video Games" items={characterDetails.videoGames} />
                   <CharacterDetails title="TV Shows" items={characterDetails.tvShows} />
                </>
             ) : (
-               <Loader>Loading details...</Loader>
+               <>
+                  {isLoading && <Loader>Ładowanie szczegółów, proszę czekać...</Loader>}
+                  {!isLoading && character && (!character.data || character.data.length === 0) && (
+                     <ErrorMessage>Postać o id: {characterId} nie znaleziona.</ErrorMessage>
+                  )}
+               </>
             )}
          </ModalContent>
       </ModalOverlay>,
