@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { CharacterDetails } from './CharacterDetails'
 import { Loader } from './Loader'
 import { ErrorMessage } from './ErrorMessage'
-import { useGetData } from '../hooks/useGetData'
-import { API_BASE_URL } from '../App'
 import styled from 'styled-components'
+import { useCharacterInfo } from '../hooks/useCharacterInfo'
 import noPicture from '../assets/no-picture.jpg'
 
 const ModalOverlay = styled.div`
@@ -84,33 +82,7 @@ const StyledHeader = styled.h2`
 
 export const CharacterModal = ({ characterId, onClose }) => {
    // characterId = 1111111111111111111  // testy
-   const { data: character, isLoading, error } = useGetData(API_BASE_URL, '/character', null, null, characterId)
-   const [characterDetails, setCharacterDetails] = useState(null)
-
-   useEffect(() => {
-      if (character) {
-         let characterData = character.data
-         // Sprawdzenie, czy dane są z tablicy i jeśli tak, czy jest niepusta
-         if (Array.isArray(characterData)) {
-            if (characterData.length === 0) {
-               characterData = null
-            } else {
-               characterData = characterData[0]
-            }
-         }
-         if (characterData) {
-            const { films, shortFilms, videoGames, tvShows } = characterData
-            setCharacterDetails({
-               films: films || [],
-               shortFilms: shortFilms || [],
-               videoGames: videoGames || [],
-               tvShows: tvShows || [],
-            })
-         } else {
-            setCharacterDetails(null)
-         }
-      }
-   }, [character])
+   const { characterInfo, isLoading, error } = useCharacterInfo(characterId)
 
    const handleCloseClick = e => {
       if (e.target === e.currentTarget) {
@@ -123,19 +95,19 @@ export const CharacterModal = ({ characterId, onClose }) => {
          <ModalContent>
             <StyledCloseButton onClick={onClose}>X</StyledCloseButton>
             {error && <ErrorMessage>{error.message}</ErrorMessage>}
-            {characterDetails ? (
+            {characterInfo ? (
                <>
-                  <StyledImage src={character.data.imageUrl || noPicture} alt={character.data.name} />
-                  <StyledHeader>{character.data.name}</StyledHeader>
-                  <CharacterDetails title="Films" items={characterDetails.films} />
-                  <CharacterDetails title="Short Films" items={characterDetails.shortFilms} />
-                  <CharacterDetails title="Video Games" items={characterDetails.videoGames} />
-                  <CharacterDetails title="TV Shows" items={characterDetails.tvShows} />
+                  <StyledImage src={characterInfo.imageUrl || noPicture} alt={characterInfo.name} />
+                  <StyledHeader>{characterInfo.name}</StyledHeader>
+                  <CharacterDetails title="Films" items={characterInfo.films} />
+                  <CharacterDetails title="Short Films" items={characterInfo.shortFilms} />
+                  <CharacterDetails title="Video Games" items={characterInfo.videoGames} />
+                  <CharacterDetails title="TV Shows" items={characterInfo.tvShows} />
                </>
             ) : (
                <>
                   {isLoading && <Loader>Ładowanie szczegółów, proszę czekać...</Loader>}
-                  {!isLoading && character && (!character.data || character.data.length === 0) && (
+                  {!isLoading && !characterInfo && (
                      <ErrorMessage>Postać o id: {characterId} nie znaleziona.</ErrorMessage>
                   )}
                </>
