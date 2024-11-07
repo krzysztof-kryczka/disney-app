@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CharacterModal } from './CharacterModal'
 import styled from 'styled-components'
+import noPicture from '../assets/no-picture.jpg'
 
 const StyledImageList = styled.ul`
    grid-gap: 30px;
@@ -70,7 +71,7 @@ export const ImageGallery = ({ images }) => {
          <StyledImageList>
             {images.map(character => (
                <StyledImageItem key={character._id}>
-                  <StyledImage src={character.imageUrl} alt={character.name} />
+                  <StyledImage src={character.imageUrl || noPicture} alt={character.name} />
                   <StyledHeader>{character.name}</StyledHeader>
                   <StyledButton onClick={() => handleButtonClick(character)}>Więcej informacji</StyledButton>
                </StyledImageItem>

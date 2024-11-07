@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { CharacterDetails } from './CharacterDetails'
 import { Loader } from './Loader'
 import styled from 'styled-components'
+import noPicture from '../assets/no-picture.jpg'
 
 const ModalOverlay = styled.div`
    position: fixed;
@@ -102,7 +103,7 @@ export const CharacterModal = ({ character, onClose }) => {
       <ModalOverlay onClick={handleCloseClick}>
          <ModalContent>
             <StyledCloseButton onClick={onClose}>X</StyledCloseButton>
-            <StyledImage src={character.imageUrl} alt={character.name} />
+            <StyledImage src={character.imageUrl || noPicture} alt={character.name} />
             <StyledHeader>{character.name}</StyledHeader>
             {characterDetails ? (
                <>
