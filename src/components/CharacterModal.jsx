@@ -26,7 +26,7 @@ const ModalContent = styled.div`
    max-height: 80vh;
    padding: 20px;
    border-radius: 12px;
-   background: #fff;
+   background: ${props => props.theme.palette.background.paper};
    overflow-y: auto;
 
    /* Stylizacja paska przewijania */
@@ -35,12 +35,13 @@ const ModalContent = styled.div`
    }
 
    &::-webkit-scrollbar-thumb {
-      background-color: #e51b36; /* Kolor paska przewijania */
+      background-color: ${props => props.theme.palette.primary.main}; /* Kolor paska przewijania */
       border-radius: 6px; /* Zaokrąglenie paska przewijania */
    }
 
    &::-webkit-scrollbar-track {
-      background: #f1f1f1; /* Kolor tła paska przewijania */
+      background: ${props =>
+         props.theme.palette.mode === 'light' ? '#f1f1f1' : '#424242'}; /* Kolor tła paska przewijania */
       border-radius: 6px; /* Zaokrąglenie tła paska przewijania */
    }
 `
@@ -49,18 +50,18 @@ const StyledCloseButton = styled.button`
    position: sticky;
    top: 0;
    right: 0;
-   background-color: #fff;
+   background-color: ${props => props.theme.palette.background.paper};
    cursor: pointer;
    padding: 10px 16px;
    font-size: 20px;
    font-weight: 700;
    text-decoration: none;
-   color: #e51b36;
-   border: 2px solid #e51b36;
+   color: ${props => props.theme.palette.primary.main};
+   border: 2px solid ${props => props.theme.palette.primary.main};
    border-radius: 4px;
-   transform: translate(900%, 0%);
+   transform: translate(800%, 0%);
    &:hover {
-      background-color: #e51b36;
+      background-color: ${props => props.theme.palette.primary.main};
       color: #fff;
    }
 `
@@ -75,9 +76,11 @@ const StyledImage = styled.img`
 `
 
 const StyledHeader = styled.h2`
+   font-family: 'Walt Disney Script', sans-serif;
    margin: 10px 0;
-   color: #000;
+   color: ${props => (props.theme.palette.mode === 'light' ? '#000' : '#fff')};
    text-align: center;
+   font-size: 64px;
 `
 
 export const CharacterModal = ({ characterId, onClose }) => {
@@ -97,8 +100,8 @@ export const CharacterModal = ({ characterId, onClose }) => {
             {error && <ErrorMessage>{error.message}</ErrorMessage>}
             {characterInfo ? (
                <>
-                  <StyledImage src={characterInfo.imageUrl || noPicture} alt={characterInfo.name} />
                   <StyledHeader>{characterInfo.name}</StyledHeader>
+                  <StyledImage src={characterInfo.imageUrl || noPicture} alt={characterInfo.name} />
                   <CharacterDetails title="Films" items={characterInfo.films} />
                   <CharacterDetails title="Short Films" items={characterInfo.shortFilms} />
                   <CharacterDetails title="Video Games" items={characterInfo.videoGames} />

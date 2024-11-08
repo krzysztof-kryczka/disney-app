@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CharacterModal } from './CharacterModal'
-import styled from 'styled-components'
+import { styled } from 'styled-components'
+import { useTheme } from '@mui/material/styles'
 import noPicture from '../assets/no-picture.jpg'
 
 const StyledImageList = styled.ul`
@@ -14,15 +15,15 @@ const StyledImageList = styled.ul`
 const StyledImageItem = styled.li`
    box-sizing: border-box;
    text-align: center;
-   border: 2px solid #ccc;
+   border: 2px solid ${props => props.theme.palette.primary.main};
    border-radius: 8px;
    padding-bottom: 15px;
    display: flex;
    flex-direction: column;
    align-items: center;
-   background-color: #f9f9f9;
+   background-color: ${props => props.theme.palette.background.paper};
    box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.2);
-   color: red;
+   color: ${props => (props.theme.palette.mode === 'light' ? '#000' : '#fff')};
    position: relative;
    height: 300px;
 `
@@ -36,7 +37,8 @@ const StyledImage = styled.img`
 
 const StyledHeader = styled.h2`
    margin: 10px 0;
-   color: #000;
+   color: ${props => (props.theme.palette.mode === 'light' ? '#000' : '#fff')};
+   font-size: 32px;
 `
 
 const StyledButton = styled.button`
@@ -48,18 +50,19 @@ const StyledButton = styled.button`
    font-size: 20px;
    font-weight: 700;
    text-decoration: none;
-   color: #e51b36;
-   border: 2px solid #e51b36;
+   color: ${props => props.theme.palette.primary.main};
+   border: 2px solid ${props => props.theme.palette.primary.main};
    border-radius: 4px;
-   background-color: #fff;
+   background-color: ${props => (props.theme.palette.mode === 'light' ? '#fff' : props.theme.palette.background.paper)};
    &:hover {
-      background-color: #e51b36;
+      background-color: ${props => props.theme.palette.primary.main};
       color: #fff;
    }
 `
 
 export const ImageGallery = ({ images }) => {
    const [selectedCharacterId, setSelectedCharacterId] = useState(null)
+   const theme = useTheme()
 
    const handleButtonClick = character => {
       setSelectedCharacterId(character._id)

@@ -1,10 +1,11 @@
-
 import styled from 'styled-components'
 
 const StyledHeader = styled.h3`
    margin: 10px 0;
-   color: #e51b36;
+   color: ${props => props.theme.palette.primary.main};
    text-align: center;
+   font-family: 'Walt Disney Script', sans-serif;
+   font-size: 48px;
 `
 
 export const CharacterDetails = ({ title, items }) =>

@@ -3,43 +3,24 @@ import { useGetData } from './hooks/useGetData'
 import { ErrorMessage } from './components/ErrorMessage'
 import { Loader } from './components/Loader'
 import { ImageGallery } from './components/ImageGallery'
-import { Pagination, Select, MenuItem, FormControl, InputLabel } from '@mui/material'
-import { makeStyles } from '@mui/styles'
-
+import { Header } from './components/Header'
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
+import { ThemeProvider as StyledThemeProvider } from 'styled-components'
+import CssBaseline from '@mui/material/CssBaseline'
 import './App.css'
+import { darkTheme, lightTheme } from './components/Theme'
+import { Select } from './components/Select'
+import { Pagination } from './components/Pagination'
 
 export const API_BASE_URL = 'https://api.disneyapi.dev'
-
-const useStyles = makeStyles({
-   pagination: {
-      display: 'flex',
-      justifyContent: 'center',
-      marginTop: '20px',
-      '& .MuiPaginationItem-root': {
-         color: '#e51b36',
-         fontWeight: 'bold',
-         fontSize: '25px',
-         '&:hover': { color: '#fff', backgroundColor: '#e51b36' },
-      },
-      '& .Mui-selected': { color: '#e51b36', border: '2px solid #e51b36;' },
-   },
-   select: {
-      display: 'flex',
-      justifyContent: 'center',
-      marginTop: '20px',
-      marginBottom: '20px',
-      width: '200px',
-      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#e51b36' },
-   },
-})
 
 export const App = () => {
    const [page, setPage] = useState(1)
    const [limit, setLimit] = useState(50)
-
    const { data: images, isLoading, error } = useGetData(API_BASE_URL, '/character', page, limit)
+   const [darkMode, setDarkMode] = useState(false)
 
-   const classes = useStyles()
+   const theme = darkMode ? darkTheme : lightTheme
 
    const handlePageChange = (e, value) => {
       setPage(value)
@@ -51,27 +32,16 @@ export const App = () => {
    }
 
    return (
-      <>
-         {isLoading && <Loader>Loading...</Loader>}
-         {error && <ErrorMessage>{error.message}</ErrorMessage>}
-         {images && <ImageGallery images={images.data} />}
-         <FormControl className={classes.select}>
-            <InputLabel id="page-size-label">Liczba elementów na stronie</InputLabel>
-            <Select labelId="page-size-label" id="page-size-select" value={limit} onChange={handleLimitChange}>
-               <MenuItem value={10}>10</MenuItem>
-               <MenuItem value={20}>20</MenuItem>
-               <MenuItem value={50}>50</MenuItem>
-               <MenuItem value={100}>100</MenuItem>
-            </Select>
-         </FormControl>
-         {images && (
-            <Pagination
-               className={classes.pagination}
-               count={images.info.totalPages}
-               page={page}
-               onChange={handlePageChange}
-            />
-         )}
-      </>
+      <MuiThemeProvider theme={theme}>
+         <StyledThemeProvider theme={theme}>
+            <CssBaseline />
+            <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+            {isLoading && <Loader>Loading...</Loader>}
+            {error && <ErrorMessage>{error.message}</ErrorMessage>}
+            {images && <ImageGallery images={images.data} />}
+            <Select limit={limit} handleLimitChange={handleLimitChange} />
+            {images && <Pagination count={images.info.totalPages} page={page} onChange={handlePageChange} />}
+         </StyledThemeProvider>
+      </MuiThemeProvider>
    )
 }
