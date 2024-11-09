@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { CharacterModal } from './CharacterModal'
 import { styled } from 'styled-components'
-import { useTheme } from '@mui/material/styles'
+import { useThemeContext } from '../hooks/useThemeContext'
 import noPicture from '../assets/no-picture.jpg'
 
 const StyledImageList = styled.ul`
@@ -37,8 +37,8 @@ const StyledImage = styled.img`
 
 const StyledHeader = styled.h2`
    margin: 10px 0;
-   color: ${props => (props.theme.palette.mode === 'light' ? '#000' : '#fff')};
-   font-size: 32px;
+   color: ${props => props.theme.palette.primary.text};
+   padding: 5px;
 `
 
 const StyledButton = styled.button`
@@ -62,7 +62,7 @@ const StyledButton = styled.button`
 
 export const ImageGallery = ({ images }) => {
    const [selectedCharacterId, setSelectedCharacterId] = useState(null)
-   const theme = useTheme()
+   const { theme } = useThemeContext()
 
    const handleButtonClick = character => {
       setSelectedCharacterId(character._id)
@@ -70,12 +70,14 @@ export const ImageGallery = ({ images }) => {
 
    return (
       <>
-         <StyledImageList>
+         <StyledImageList theme={theme}>
             {images.map(character => (
-               <StyledImageItem key={character._id}>
-                  <StyledImage src={character.imageUrl || noPicture} alt={character.name} />
-                  <StyledHeader>{character.name}</StyledHeader>
-                  <StyledButton onClick={() => handleButtonClick(character)}>Więcej informacji</StyledButton>
+               <StyledImageItem theme={theme} key={character._id}>
+                  <StyledImage theme={theme} src={character.imageUrl || noPicture} alt={character.name} />
+                  <StyledHeader theme={theme}>{character.name}</StyledHeader>
+                  <StyledButton theme={theme} onClick={() => handleButtonClick(character)}>
+                     Więcej informacji
+                  </StyledButton>
                </StyledImageItem>
             ))}
          </StyledImageList>

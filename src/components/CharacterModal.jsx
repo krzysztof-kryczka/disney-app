@@ -5,6 +5,7 @@ import { ErrorMessage } from './ErrorMessage'
 import styled from 'styled-components'
 import { useCharacterInfo } from '../hooks/useCharacterInfo'
 import noPicture from '../assets/no-picture.jpg'
+import { useThemeContext } from '../hooks/useThemeContext'
 
 const ModalOverlay = styled.div`
    position: fixed;
@@ -71,14 +72,14 @@ const StyledImage = styled.img`
    border-radius: 50%;
    width: 200px;
    height: 200px;
-   object-fit: cover;
+   object-fit: fill;
    margin: 0 auto;
 `
 
 const StyledHeader = styled.h2`
    font-family: 'Walt Disney Script', sans-serif;
    margin: 10px 0;
-   color: ${props => (props.theme.palette.mode === 'light' ? '#000' : '#fff')};
+   color: ${props => props.theme.palette.primary.text};
    text-align: center;
    font-size: 64px;
 `
@@ -86,6 +87,7 @@ const StyledHeader = styled.h2`
 export const CharacterModal = ({ characterId, onClose }) => {
    // characterId = 1111111111111111111  // testy
    const { characterInfo, isLoading, error } = useCharacterInfo(characterId)
+   const { theme } = useThemeContext()
 
    const handleCloseClick = e => {
       if (e.target === e.currentTarget) {
@@ -95,12 +97,14 @@ export const CharacterModal = ({ characterId, onClose }) => {
 
    return createPortal(
       <ModalOverlay onClick={handleCloseClick}>
-         <ModalContent>
-            <StyledCloseButton onClick={onClose}>X</StyledCloseButton>
+         <ModalContent theme={theme}>
+            <StyledCloseButton theme={theme} onClick={onClose}>
+               X
+            </StyledCloseButton>
             {error && <ErrorMessage>{error.message}</ErrorMessage>}
             {characterInfo ? (
                <>
-                  <StyledHeader>{characterInfo.name}</StyledHeader>
+                  <StyledHeader theme={theme}>{characterInfo.name}</StyledHeader>
                   <StyledImage src={characterInfo.imageUrl || noPicture} alt={characterInfo.name} />
                   <CharacterDetails title="Films" items={characterInfo.films} />
                   <CharacterDetails title="Short Films" items={characterInfo.shortFilms} />
@@ -109,7 +113,7 @@ export const CharacterModal = ({ characterId, onClose }) => {
                </>
             ) : (
                <>
-                  {isLoading && <Loader>Ładowanie szczegółów, proszę czekać...</Loader>}
+                  {isLoading && <Loader />}
                   {!isLoading && !characterInfo && (
                      <ErrorMessage>Postać o id: {characterId} nie znaleziona.</ErrorMessage>
                   )}

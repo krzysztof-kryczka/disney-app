@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import { styled } from '@mui/material/styles'
 import Switch from '@mui/material/Switch'
-import { useTheme } from '@mui/material/styles'
+import { useThemeContext } from '../hooks/useThemeContext'
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
    width: 62,
@@ -57,20 +57,16 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }))
 
 export const Header = ({ darkMode, setDarkMode }) => {
-   const theme = useTheme()
-
-   const handleThemeChange = event => {
-      setDarkMode(event.target.checked)
-   }
+   const { theme, toggleTheme } = useThemeContext()
 
    return (
       <AppBar position="static" style={{ backgroundColor: theme.palette.background.toolbar }}>
          <Toolbar>
-            <Typography variant="h1" style={{ flexGrow: 1, fontFamily:'Walt Disney Script', padding: '20px' }}>
+            <Typography variant="h1" style={{ flexGrow: 1, fontFamily: 'Walt Disney Script', padding: '20px' }}>
                Disney App
             </Typography>
             <Box>
-               <MaterialUISwitch checked={darkMode} onChange={handleThemeChange} />
+               <MaterialUISwitch checked={darkMode} onChange={toggleTheme} />
             </Box>
          </Toolbar>
       </AppBar>
