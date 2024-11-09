@@ -9,14 +9,13 @@ export const useGetData = (API_BASE_URL, path, page, limit, characterId = null) 
 
    useEffect(() => {
       const fetchData = async () => {
+         setIsLoading(true)
+         setData(null)
          try {
             if (characterId) {
-               // getOneCharacter: 'https://api.disneyapi.dev/character/:id'
                endpoint = new URL(`${path}/${characterId}`, API_BASE_URL).href
             } else {
-               // getAllCharacters: 'https://api.disneyapi.dev/character/?page=1&pageSize=50
                endpoint = new URL(path, API_BASE_URL).href + `?page=${page}&pageSize=${limit}`
-               // endpoint = `${new URL(path, API_BASE_URL).href}?page=${page}&pageSize=${limit}`
             }
             const response = await fetch(endpoint)
             if (!response.ok) {
@@ -24,7 +23,6 @@ export const useGetData = (API_BASE_URL, path, page, limit, characterId = null) 
             }
             const data = await response.json()
             setData(data)
-            setIsLoading(false)
          } catch (err) {
             setError(err)
          } finally {
