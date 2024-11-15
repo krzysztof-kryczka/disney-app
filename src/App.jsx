@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { useGetData } from './hooks/useGetData'
 import { ErrorMessage } from './components/ErrorMessage'
 import { Loader } from './components/Loader'
@@ -13,12 +12,10 @@ import { GlobalStyle } from './components/GlobalStyle'
 export const API_BASE_URL = 'https://api.disneyapi.dev'
 
 export const App = () => {
-   const [page, setPage] = useState(1)
-   const [limit, setLimit] = useState(50)
-   const { data: images, isLoading, error } = useGetData(API_BASE_URL, '/character', page, limit)
+   const { data: images, isLoading, error, page, setPage, limit, setLimit } = useGetData(API_BASE_URL, '/character')
    const { theme } = useThemeContext()
 
-   const handlePageChange = (e, value) => {
+   const handlePageChange = (_, value) => {
       setPage(value)
    }
 
