@@ -1,11 +1,11 @@
 import { createPortal } from 'react-dom'
 import { CharacterDetails } from './CharacterDetails'
 import { Loader } from './Loader'
-import { ErrorMessage } from './ErrorMessage'
 import styled from 'styled-components'
-import { useCharacterInfo } from '../hooks/useCharacterInfo'
 import noPicture from '../assets/no-picture.jpg'
 import { useThemeContext } from '../hooks/useThemeContext'
+import { useGetData } from '../hooks/useGetData'
+import { API_BASE_URL } from '../App'
 
 const ModalOverlay = styled.div`
    position: fixed;
@@ -84,10 +84,33 @@ const StyledHeader = styled.h2`
    font-size: 64px;
 `
 
+const CenteredErrorMessage = styled.p`
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background-color: #8a1e13;
+   color: #f0ff00;
+   padding: 12px 24px;
+   border-radius: 8px;
+   border: solid 2px #fffffe;
+`
+
 export const CharacterModal = ({ characterId, onClose }) => {
-   // characterId = 1111111111111111111  // testy
-   const { characterInfo, isLoading, error } = useCharacterInfo(characterId)
    const { theme } = useThemeContext()
+   const { data: character, isLoading, error } = useGetData(API_BASE_URL, '/character', characterId)
+
+   // let characterInfo = null
+   // if (character && Array.isArray(character.data)) {
+   //    characterInfo = character.data.length === 0 ? null : character.data[0]
+   // } else {
+   //    characterInfo = character?.data || null
+   // }
+
+   const characterInfo = Array.isArray(character?.data)
+      ? character.data.length > 0
+         ? character.data[0]
+         : null
+      : character?.data || null
 
    const handleCloseClick = e => {
       if (e.target === e.currentTarget) {
@@ -101,23 +124,23 @@ export const CharacterModal = ({ characterId, onClose }) => {
             <StyledCloseButton theme={theme} onClick={onClose}>
                X
             </StyledCloseButton>
-            {error && <ErrorMessage>{error.message}</ErrorMessage>}
-            {characterInfo ? (
-               <>
-                  <StyledHeader theme={theme}>{characterInfo.name}</StyledHeader>
-                  <StyledImage src={characterInfo.imageUrl || noPicture} alt={characterInfo.name} />
-                  <CharacterDetails title="Films" items={characterInfo.films} />
-                  <CharacterDetails title="Short Films" items={characterInfo.shortFilms} />
-                  <CharacterDetails title="Video Games" items={characterInfo.videoGames} />
-                  <CharacterDetails title="TV Shows" items={characterInfo.tvShows} />
-               </>
+            {isLoading && <Loader />}
+            {!isLoading && (error || !characterInfo) ? (
+               <CenteredErrorMessage>
+                  {error ? error.message : `Postać o id: ${characterId} nie znaleziona.`}
+               </CenteredErrorMessage>
             ) : (
-               <>
-                  {isLoading && <Loader />}
-                  {!isLoading && !characterInfo && (
-                     <ErrorMessage>Postać o id: {characterId} nie znaleziona.</ErrorMessage>
-                  )}
-               </>
+               !isLoading &&
+               characterInfo && (
+                  <>
+                     <StyledHeader theme={theme}>{characterInfo.name}</StyledHeader>
+                     <StyledImage src={characterInfo.imageUrl || noPicture} alt={characterInfo.name} />
+                     <CharacterDetails title="Films" items={characterInfo.films} />
+                     <CharacterDetails title="Short Films" items={characterInfo.shortFilms} />
+                     <CharacterDetails title="Video Games" items={characterInfo.videoGames} />
+                     <CharacterDetails title="TV Shows" items={characterInfo.tvShows} />
+                  </>
+               )
             )}
          </ModalContent>
       </ModalOverlay>,
