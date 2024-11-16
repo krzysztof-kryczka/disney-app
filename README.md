@@ -1,4 +1,4 @@
-# Form APP
+# Disney APP (data from external API)
 
 ## Application made with React + VITE
 
