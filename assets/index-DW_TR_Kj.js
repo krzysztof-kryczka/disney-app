@@ -77,7 +77,7 @@ Error generating stack: `+i.message+`
    margin: 5px 0;
    font-family: 'Walt Disney Script', sans-serif;
    font-size: 32px;
-`,ks=({title:e,items:t})=>{const{theme:n}=cr();return t.length>0&&$.jsxs($.Fragment,{children:[$.jsx(gx,{theme:n,children:e}),$.jsx("ul",{children:t.map((r,o)=>$.jsx(yx,{theme:n,children:r},o))})]})},I0="/assets/no-picture-B0JRWzzS.jpg",vx=We.div`
+`,ks=({title:e,items:t})=>{const{theme:n}=cr();return t.length>0&&$.jsxs($.Fragment,{children:[$.jsx(gx,{theme:n,children:e}),$.jsx("ul",{children:t.map((r,o)=>$.jsx(yx,{theme:n,children:r},o))})]})},I0="/disney-app/assets/no-picture-B0JRWzzS.jpg",vx=We.div`
    position: fixed;
    left: 0;
    right: 0;
